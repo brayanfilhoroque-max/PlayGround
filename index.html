@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <meta name="theme-color" content="#101510" />
+  <title>CHICLE ROYALE — Sobreviva ao último círculo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+  <script type="importmap">
+    {"imports":{"three":"https://unpkg.com/three@0.161.0/build/three.module.js"}}
+  </script>
+</head>
+<body>
+  <div id="game-shell">
+    <canvas id="game-canvas"></canvas>
+    <div class="vignette"></div>
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="Chicle Royale início"><span class="brand-mark">C</span><span class="brand-name">CHICLE<span> ROYALE</span><small>ÚLTIMO CÍRCULO</small></span></a>
+      <div class="top-center"><span class="season-tag"><i></i> TEMPORADA 04</span><span class="season-name">FRONTEIRA SELVAGEM</span></div>
+      <div class="account"><span class="currency"><b class="coin">◆</b> 2.450</span><span class="currency"><b class="gem">◈</b> 180</span><button class="profile"><span class="avatar">JV</span><span>JOGADOR<br><small>NÍVEL 24</small></span><b>⌄</b></button></div>
+    </header>
+
+    <aside class="left-rail">
+      <button class="rail-item active" data-panel="play"><span>▣</span>JOGAR</button>
+      <button class="rail-item" data-panel="armory"><span>⌖</span>ARSENAL</button>
+      <button class="rail-item" data-panel="store"><span>◇</span>LOJA</button>
+      <button class="rail-item" data-panel="pass"><span>◈</span>PASSE</button>
+      <div class="rail-bottom"><span class="online-dot"></span> 1.284.092<br> <small>JOGADORES ONLINE</small></div>
+    </aside>
+
+    <main class="lobby" id="lobby">
+      <div class="lobby-copy">
+        <div class="eyebrow"><span></span> BATALHA REAL · 50 JOGADORES</div>
+        <h1>CAIA.<br><em>ENCARE.</em><br>SOBREVIVA.</h1>
+        <p>Uma ilha. Cinquenta sobreviventes.<br>Só o último no círculo leva tudo.</p>
+        <div class="mode-row">
+          <span class="mode-label">MODO</span>
+          <button class="mode-chip chosen" data-mode="SOLO">SOLO <small>1 JOGADOR</small></button>
+          <button class="mode-chip" data-mode="DUPLA">DUPLA <small>2 JOGADORES</small></button>
+          <button class="mode-chip" data-mode="ESQUADRÃO">ESQUADRÃO <small>4 JOGADORES</small></button>
+        </div>
+        <div class="map-row"><div><span class="mode-label">CAMPO DE BATALHA</span><strong id="map-name">ILHA DA BRUMA</strong></div><button id="map-select" class="map-change">TROCAR MAPA <span>⌄</span></button></div>
+        <button id="play-button" class="play-button"><span>▶</span><span>INICIAR PARTIDA<small>ENTRAR NO CAMPO DE BATALHA</small></span><b>→</b></button>
+        <div class="quick-note"><span>⌁</span> <b>PRONTO PARA O COMBATE</b><i>•</i> LATÊNCIA 32 MS</div>
+      </div>
+      <div class="hero-side"><div class="hero-label"><span class="hero-line"></span><span>OPERADOR 07</span><b>◆ ◆ ◆ ◆ ◇</b></div><div class="hero-caption"><small>EDIÇÃO DE COMBATE</small><strong>VANGUARDA<br><em>DO NORTE</em></strong></div></div>
+      <div class="right-stack"><div class="event-card"><div class="event-top"><span>EVENTO ATIVO</span><b>03D : 18H</b></div><strong>FRONTEIRA<br>SEL<em>VAGEM</em></strong><p>O terreno não perdoa.</p><div class="event-progress"><span></span></div><small>RECOMPENSA EXCLUSIVA · 68%</small></div><button class="daily-card"><span class="daily-icon">✦</span><span><b>MISSÕES DIÁRIAS</b><small>3 novas recompensas</small></span><b class="arrow">→</b></button></div>
+      <div class="bottom-world"><span>●</span> ILHA DA BRUMA <i>/</i> COSTA LESTE <i>/</i> 14:32</div>
+    </main>
+
+    <section id="map-menu" class="map-menu hidden" aria-label="Selecionar mapa"><div class="menu-head"><div><small>ESCOLHA SEU DESTINO</small><h2>CAMPOS DE BATALHA</h2></div><button class="close-btn" id="close-maps">×</button></div><div class="map-grid" id="map-grid"></div><button class="confirm-map" id="confirm-map">CONFIRMAR DESTINO <span>→</span></button></section>
+
+    <section id="sub-panel" class="sub-panel hidden"><button id="close-panel" class="close-btn">×</button><small id="panel-kicker">PERSONALIZAÇÃO</small><h2 id="panel-title">ARSENAL</h2><p id="panel-description">Prepare-se para a próxima queda.</p><div class="panel-items" id="panel-items"></div></section>
+
+    <section id="hud" class="hud hidden">
+      <div class="match-top"><div class="match-brand"><span class="mini-mark">C</span> CHICLE ROYALE</div><div class="match-status"><span class="live-dot"></span> AO VIVO <b id="match-clock">00:00</b></div><div class="match-stats"><span>♙ <b id="alive-count">50</b> <small>VIVOS</small></span><span>✦ <b id="kill-count">0</b> <small>ABATES</small></span><button id="pause-button" class="pause-button">Ⅱ</button></div></div>
+      <div class="zone-alert hidden" id="zone-alert"><b>⚠ ZONA DE SEGURANÇA DIMINUINDO</b><small>PROCURE O CÍRCULO</small></div>
+      <div class="minimap"><canvas id="mini-canvas" width="168" height="168"></canvas><span class="mini-n">N</span><div class="map-coords">BRUMA · 04 / 12</div></div>
+      <div class="weapon-panel"><div class="weapon-icon">⌁</div><div class="weapon-info"><small>RIFLE DE ASSALTO</small><b>VETOR MK-II</b><span>5.56 × 45 mm</span></div><div class="ammo"><strong id="ammo-count">30</strong><span>/ 180</span></div></div>
+      <div class="health-panel"><div class="health-row"><span>♥ <b>VIDA</b></span><b id="health-value">100</b></div><div class="bar"><i id="health-bar"></i></div><div class="health-row armor-row"><span>⬟ <b>COLETE</b></span><b id="armor-value">65</b></div><div class="bar armor-bar"><i id="armor-bar"></i></div></div>
+      <div class="objective"><span class="objective-icon">⌖</span><span><b id="objective-title">ENCONTRE EQUIPAMENTO</b><small id="objective-sub">Vasculhe a área e prepare-se.</small></span><span class="objective-key">TAB</span></div>
+      <div class="kill-feed" id="kill-feed"></div>
+      <div class="controls-hint"><span>WASD <small>MOVER</small></span><span>SHIFT <small>CORRER</small></span><span>ESPAÇO <small>PULAR</small></span><span>C <small>AGACHAR</small></span><span>F <small>CHICLETE</small></span></div>
+      <div class="crosshair"><i></i><i></i><i></i><i></i><b></b></div>
+      <div class="touch-controls"><div class="move-pad"><span>＋</span><button data-move="forward">▲</button><button data-move="left">◀</button><button data-move="back">▼</button><button data-move="right">▶</button></div><div class="touch-actions"><button data-action="gum" class="touch-gum">CHICLETE</button><button data-action="jump">↟</button><button data-action="crouch">C</button><button data-action="fire" class="touch-fire">●</button></div></div>
+    </section>
+
+    <section id="pause-menu" class="modal hidden"><div class="modal-card"><small>CHICLE ROYALE</small><h2>PAUSA TÁTICA</h2><p>Respire. O círculo não espera.</p><div class="pause-options"><button id="resume-button">RETOMAR PARTIDA <span>→</span></button><button id="settings-button">SENSIBILIDADE <span>⌁</span></button><button id="leave-button">ABANDONAR PARTIDA <span>×</span></button></div><div class="sensitivity hidden" id="sensitivity"><label>SENSIBILIDADE DA CÂMERA <b id="sens-value">55</b></label><input id="sens-range" type="range" min="20" max="100" value="55"></div></div></section>
+
+    <section id="result-menu" class="modal hidden"><div class="modal-card result-card"><small id="result-kicker">FIM DE PARTIDA</small><h2 id="result-title">ELIMINADO</h2><p id="result-text">A ilha ainda guarda outras histórias.</p><div class="result-stats"><span><b id="result-kills">0</b><small>ABATES</small></span><span><b id="result-time">00:00</b><small>TEMPO SOBREVIVIDO</small></span><span><b>+240</b><small>XP GANHO</small></span></div><button id="return-lobby">VOLTAR AO LOBBY <span>→</span></button></div></section>
+
+    <div id="toast" class="toast"></div>
+    <footer class="footer"><span>© 2025 CHICLE ROYALE STUDIOS</span><span>UMA EXPERIÊNCIA DE SOBREVIVÊNCIA ORIGINAL</span><span>V 1.04.2 <i>●</i></span></footer>
+  </div>
+  <script type="module" src="game.js"></script>
+</body>
+</html>
