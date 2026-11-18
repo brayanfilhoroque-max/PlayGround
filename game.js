@@ -74,8 +74,32 @@ function buildWorld(index){
   scene.background.setHex(m.sky);scene.fog.color.setHex(m.fog);scene.fog.density=index===2?.006:index===3?.009:.008;
   hemi.color.setHex(index===3?0xe8f1f5:0xdce9da);sun.color.setHex(index===3?0xdbe7f3:index===2?0xffdda8:0xffe6c1);
   const groundMat=mat(m.ground,1);const ground=new THREE.Mesh(new THREE.PlaneGeometry(260,260,1,1),groundMat);ground.rotation.x=-Math.PI/2;ground.position.y=-.12;ground.receiveShadow=true;scene.add(ground);buildings.push(ground);
-  // terrain accents and access roads
-  if(index===1){const water=new THREE.Mesh(new THREE.PlaneGeometry(260,27),new THREE.MeshStandardMaterial({color:0x315d62,roughness:.27,metalness:.18}));water.rotation.x=-Math.PI/2;water.position.set(0,-.08,-111);scene.add(water);buildings.push(water);}
+  // Each biome has its own readable layout and landmark language.
+  if(index===0){
+    for(let i=0;i<7;i++){
+      const z=-85+i*28,x=i%2?-62:62;
+      const h=rand(12,22);
+      const tower=makeBox(10,h,10,mat(i%2?0x68645a:0x7a7567),x,h/2,z);
+      buildings.push(tower);
+      const bridgeSpan=i%2?36:46;
+      const bridge=makeBox(bridgeSpan,.55,3,mat(0x454b44),x+(i%2?-bridgeSpan*.5:bridgeSpan*.5),h*.72,z);
+      buildings.push(bridge);
+    }
+  }
+  if(index===1){const water=new THREE.Mesh(new THREE.PlaneGeometry(260,27),new THREE.MeshStandardMaterial({color:0x315d62,roughness:.27,metalness:.18}));water.rotation.x=-Math.PI/2;water.position.set(0,-.08,-111);scene.add(water);buildings.push(water);
+    for(let i=0;i<8;i++){const pier=makeBox(4,.35,16,mat(0x71583d),rand(-95,95),.05,-93+rand(-3,7));buildings.push(pier)}
+  }
+  if(index===2){
+    for(let i=0;i<5;i++){const h=rand(5,9);const temple=new THREE.Mesh(new THREE.CylinderGeometry(10-i*.8,13-i*.5,h,6),mat(0xa78d61));temple.position.set(-70+i*35,h/2,55+(i%2)*18);temple.castShadow=true;scene.add(temple);buildings.push(temple)}
+  }
+  if(index===3){
+    for(let i=0;i<9;i++){const h=rand(5,8);const cabin=makeBox(11,h,9,mat(i%2?0x7f9293:0x9aa9a8),-80+i*20,h/2,-35+(i%3)*35);buildings.push(cabin);
+      const snowRoof=makeBox(12,.5,10,mat(0xdde5df),cabin.position.x,h+.25,cabin.position.z);buildings.push(snowRoof)}
+  }
+  if(index===4){
+    for(let i=0;i<6;i++){const hangar=makeBox(24,9,18,mat(i%2?0x59645d:0x6d7166),-75+i*30,4.5,50-(i%2)*70);buildings.push(hangar);
+      for(let s=-1;s<=1;s+=2){const door=makeBox(.12,5,6,mat(0x303936),hangar.position.x+s*12,2.5,hangar.position.z+9.03);buildings.push(door)}}
+  }
   if(index===2){for(let i=0;i<9;i++){const dune=new THREE.Mesh(new THREE.SphereGeometry(1,16,8),mat(0xb19365));dune.scale.set(rand(13,26),rand(1.5,4),rand(10,20));dune.position.set(rand(-115,115),-1.6,rand(-115,115));scene.add(dune);decor.push(dune)}}
   if(index===3){for(let i=0;i<6;i++){const ice=new THREE.Mesh(new THREE.CircleGeometry(rand(5,12),24),new THREE.MeshStandardMaterial({color:0x77989a,roughness:.24,metalness:.3,transparent:true,opacity:.8}));ice.rotation.x=-Math.PI/2;ice.position.set(rand(-105,105),-.03,rand(-105,105));scene.add(ice);decor.push(ice)}}
   const roadMat=mat(index===2?0x76634b:index===3?0x667376:0x353b35, .96);
