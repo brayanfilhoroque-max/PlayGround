@@ -73,8 +73,11 @@ function buildWorld(index){
   clearWorld();mapIndex=index; const m=MAPS[index];
   scene.background.setHex(m.sky);scene.fog.color.setHex(m.fog);scene.fog.density=index===2?.006:index===3?.009:.008;
   hemi.color.setHex(index===3?0xe8f1f5:0xdce9da);sun.color.setHex(index===3?0xdbe7f3:index===2?0xffdda8:0xffe6c1);
-  const groundMat=mat(m.ground,1);const ground=new THREE.Mesh(new THREE.PlaneGeometry(260,260,18,18),groundMat);ground.rotation.x=-Math.PI/2;ground.position.y=-.12;ground.receiveShadow=true;
-  const pos=ground.geometry.attributes.position;for(let i=0;i<pos.count;i++){const x=pos.getX(i),y=pos.getY(i);const noise=Math.sin(x*.035)*.22+Math.cos(y*.048)*.16+Math.sin((x+y)*.018)*.12;pos.setZ(i,noise*(index===2?.7:index===3?.25:.45))}ground.geometry.computeVertexNormals();scene.add(ground);buildings.push(ground);
+  const groundMat=new THREE.MeshStandardMaterial({color:m.ground,roughness:index===3?.82:1,metalness:index===4?.08:0});const ground=new THREE.Mesh(new THREE.PlaneGeometry(260,260,28,28),groundMat);ground.rotation.x=-Math.PI/2;ground.position.y=-.12;ground.receiveShadow=true;
+  const pos=ground.geometry.attributes.position;for(let i=0;i<pos.count;i++){const x=pos.getX(i),y=pos.getY(i);const broad=Math.sin(x*.022)*.55+Math.cos(y*.027)*.48+Math.sin((x-y)*.011)*.38;const detail=Math.sin(x*.09+Math.cos(y*.04))*Math.cos(y*.073)*.12;const relief= index===2?broad*1.35: index===3?broad*.38: broad*.7;pos.setZ(i,relief+detail*(index===2?1.4:.65))}ground.geometry.computeVertexNormals();scene.add(ground);buildings.push(ground);
+  // A low-detail color breakup keeps the floor from reading like a flat color surface.
+  const colorPatches=index===2?18:index===3?12:24;
+  for(let i=0;i<colorPatches;i++){const r=rand(5,13),patch=new THREE.Mesh(new THREE.CircleGeometry(r,16),new THREE.MeshStandardMaterial({color:index===2?rand(0x99764f,0xb29364):index===3?rand(0x879694,0xb3c0bd):rand(0x46553e,0x65705a),roughness:1,transparent:true,opacity:.42,depthWrite:false}));patch.rotation.x=-Math.PI/2;patch.position.set(rand(-115,115),-.105,rand(-115,115));patch.scale.y=rand(.45,1);scene.add(patch);decor.push(patch)}
   // Each biome has its own readable layout and landmark language.
   if(index===0){
     for(let i=0;i<7;i++){
@@ -87,15 +90,17 @@ function buildWorld(index){
       buildings.push(bridge);
     }
   }
-  if(index===1){const water=new THREE.Mesh(new THREE.PlaneGeometry(260,27),new THREE.MeshStandardMaterial({color:0x315d62,roughness:.27,metalness:.18}));water.rotation.x=-Math.PI/2;water.position.set(0,-.08,-111);scene.add(water);buildings.push(water);
-    for(let i=0;i<8;i++){const pier=makeBox(4,.35,16,mat(0x71583d),rand(-95,95),.05,-93+rand(-3,7));buildings.push(pier)}
+  if(index===1){const waterMat=new THREE.MeshPhysicalMaterial({color:0x315d62,roughness:.18,metalness:.12,transparent:true,opacity:.88,clearcoat:.55,clearcoatRoughness:.12});const water=new THREE.Mesh(new THREE.PlaneGeometry(260,27,18,3),waterMat);water.rotation.x=-Math.PI/2;water.position.set(0,-.08,-111);scene.add(water);buildings.push(water);
+    for(let i=0;i<8;i++){const pier=makeBox(4,.35,16,mat(0x71583d),rand(-95,95),.05,-93+rand(-3,7));buildings.push(pier);for(let p=-1;p<=1;p+=1){const plank=makeBox(.09,.05,15,mat(0x50422f),pier.position.x+p*1.1,.28,pier.position.z);buildings.push(plank)}}
+    for(let i=0;i<10;i++){const rock=new THREE.Mesh(new THREE.DodecahedronGeometry(rand(1.2,3.2),1),mat(rand(0x69726a,0x889087),.95,.05));rock.position.set(rand(-118,118),-.1,-98-rand(0,18));rock.scale.y=rand(.35,.7);rock.rotation.set(rand(0,.4),rand(0,3),rand(0,.3));scene.add(rock);decor.push(rock)}
   }
   if(index===2){
-    for(let i=0;i<5;i++){const h=rand(5,9);const temple=new THREE.Mesh(new THREE.CylinderGeometry(10-i*.8,13-i*.5,h,6),mat(0xa78d61));temple.position.set(-70+i*35,h/2,55+(i%2)*18);temple.castShadow=true;scene.add(temple);buildings.push(temple)}
+    for(let i=0;i<5;i++){const h=rand(6,11);const temple=new THREE.Mesh(new THREE.CylinderGeometry(10-i*.8,13-i*.5,h,8),mat(0xa78d61,.92,.02));temple.position.set(-70+i*35,h/2,55+(i%2)*18);temple.castShadow=true;temple.receiveShadow=true;scene.add(temple);buildings.push(temple);const crown=new THREE.Mesh(new THREE.CylinderGeometry(8-i*.5,9-i*.4,.45,8),mat(0x6f5c43,.82,.08));crown.position.set(temple.position.x,h+.2,temple.position.z);scene.add(crown);buildings.push(crown)}
   }
   if(index===3){
-    for(let i=0;i<9;i++){const h=rand(5,8);const cabin=makeBox(11,h,9,mat(i%2?0x7f9293:0x9aa9a8),-80+i*20,h/2,-35+(i%3)*35);buildings.push(cabin);
-      const snowRoof=makeBox(12,.5,10,mat(0xdde5df),cabin.position.x,h+.25,cabin.position.z);buildings.push(snowRoof)}
+    for(let i=0;i<9;i++){const h=rand(5,8);const cabin=makeBox(11,h,9,mat(i%2?0x7f9293:0x9aa9a8,.72,.04),-80+i*20,h/2,-35+(i%3)*35);buildings.push(cabin);
+      const snowRoof=new THREE.Mesh(new THREE.ConeGeometry(9,3.2,4),mat(0xe3e9e5,.68,.01));snowRoof.position.set(cabin.position.x,h+1.45,cabin.position.z);snowRoof.rotation.y=Math.PI/4;snowRoof.castShadow=true;scene.add(snowRoof);buildings.push(snowRoof)}
+    for(let i=0;i<12;i++){const pine=new THREE.Group();const trunk=new THREE.Mesh(new THREE.CylinderGeometry(.18,.32,2.4,7),mat(0x51453a));trunk.position.y=1.2;pine.add(trunk);for(let n=0;n<3;n++){const cone=new THREE.Mesh(new THREE.ConeGeometry(2-n*.35,2.8,8),mat(n===0?0x40595a:0x506966));cone.position.y=2.5+n*1.45;pine.add(cone)}pine.position.set(rand(-115,115),-.1,rand(-115,115));scene.add(pine);decor.push(pine)}
   }
   if(index===4){
     for(let i=0;i<6;i++){const hangar=makeBox(24,9,18,mat(i%2?0x59645d:0x6d7166),-75+i*30,4.5,50-(i%2)*70);buildings.push(hangar);
