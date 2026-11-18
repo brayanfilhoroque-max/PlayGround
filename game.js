@@ -73,7 +73,8 @@ function buildWorld(index){
   clearWorld();mapIndex=index; const m=MAPS[index];
   scene.background.setHex(m.sky);scene.fog.color.setHex(m.fog);scene.fog.density=index===2?.006:index===3?.009:.008;
   hemi.color.setHex(index===3?0xe8f1f5:0xdce9da);sun.color.setHex(index===3?0xdbe7f3:index===2?0xffdda8:0xffe6c1);
-  const groundMat=mat(m.ground,1);const ground=new THREE.Mesh(new THREE.PlaneGeometry(260,260,1,1),groundMat);ground.rotation.x=-Math.PI/2;ground.position.y=-.12;ground.receiveShadow=true;scene.add(ground);buildings.push(ground);
+  const groundMat=mat(m.ground,1);const ground=new THREE.Mesh(new THREE.PlaneGeometry(260,260,18,18),groundMat);ground.rotation.x=-Math.PI/2;ground.position.y=-.12;ground.receiveShadow=true;
+  const pos=ground.geometry.attributes.position;for(let i=0;i<pos.count;i++){const x=pos.getX(i),y=pos.getY(i);const noise=Math.sin(x*.035)*.22+Math.cos(y*.048)*.16+Math.sin((x+y)*.018)*.12;pos.setZ(i,noise*(index===2?.7:index===3?.25:.45))}ground.geometry.computeVertexNormals();scene.add(ground);buildings.push(ground);
   // Each biome has its own readable layout and landmark language.
   if(index===0){
     for(let i=0;i<7;i++){
