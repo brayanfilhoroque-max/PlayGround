@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no,viewport-fit=cover" />
+  <title>Battle Zone 3D</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <canvas id="game"></canvas>
+
+  <div id="hud">
+    <div class="topbar">
+      <div class="brand"><span class="brand-mark">BZ</span><div><b>BATTLE ZONE</b><small>FREE FIRE ARENA</small></div></div>
+      <div class="alive"><span id="alive">24</span><small>ALIVE</small></div>
+      <div class="kills"><span id="kills">0</span><small>KILLS</small></div>
+      <div class="timer"><span id="timer">02:30</span><small>ZONE SHRINK</small></div>
+    </div>
+
+    <div id="healthPanel"><div class="armorIcon">◆</div><div class="bars"><div class="bar"><i id="healthFill"></i></div><span id="healthText">100 HP</span></div></div>
+
+    <div id="weaponPanel">
+      <div class="ammo"><span id="ammo">30</span><small id="reserve">/ 120</small></div>
+      <div class="weaponName"><small id="weaponSlot">PRIMARY</small><b id="weaponName">AR-77</b></div>
+    </div>
+
+    <canvas id="minimap" width="180" height="180"></canvas>
+
+    <div id="crosshair"><i></i><i></i><i></i><i></i><b></b></div>
+    <div id="message"></div>
+
+    <div class="leftControls">
+      <div id="stick"><div id="stickKnob"></div></div>
+    </div>
+    <div class="rightControls">
+      <button id="jumpBtn" class="round">↑<small>JUMP</small></button>
+      <button id="crouchBtn" class="round">◆<small>CROUCH</small></button>
+      <button id="reloadBtn" class="action">↻<small>RELOAD</small></button>
+      <button id="fireBtn" class="fire">FIRE</button>
+    </div>
+  </div>
+
+  <div id="startScreen" class="overlay">
+    <div class="menuCard">
+      <div class="season">SEASON 07 <b>• LIVE</b></div>
+      <h1>BATTLE ZONE</h1>
+      <p>RANKED SURVIVAL</p>
+      <div class="mode"><span>SOLO</span><small>NEPAL ISLAND • 24 PLAYERS</small></div>
+      <button id="startBtn"><span>START MATCH</span><small>SOLO</small></button>
+      <div class="keyHints"><span><b>WASD</b> MOVE</span><span><b>MOUSE</b> AIM</span><span><b>CLICK</b> FIRE</span></div>
+    </div>
+  </div>
+
+  <div id="endScreen" class="overlay hidden">
+    <div class="menuCard result">
+      <div id="rankIcon">♛</div>
+      <h1 id="resultTitle">BOOYAH!</h1>
+      <p id="resultSub">WINNER WINNER CHICKEN DINNER</p>
+      <div class="stats"><div><span id="finalKills">0</span><small>ELIMINATIONS</small></div><div><span id="finalAlive">1</span><small>PLACE</small></div></div>
+      <button id="againBtn"><span>PLAY AGAIN</span></button>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
